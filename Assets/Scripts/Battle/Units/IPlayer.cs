@@ -1,4 +1,4 @@
-﻿namespace SpaceShootuh.Gameplay.Units
+﻿namespace SpaceShootuh.Battle.Units
 {
     public interface IPlayer
     {

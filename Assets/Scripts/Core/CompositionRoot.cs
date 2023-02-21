@@ -1,4 +1,6 @@
-﻿using SpaceShootuh.Configurations;
+﻿using SpaceShootuh.Battle;
+using SpaceShootuh.Battle.Units;
+using SpaceShootuh.Configurations;
 using SpaceShootuh.Core.Audio;
 using SpaceShootuh.Core.Cameras;
 using SpaceShootuh.Core.Controls;
@@ -18,6 +20,8 @@ namespace SpaceShootuh.Core
         private static IResourceManager ResourceManager;
         private static IAudioManager AudioManager;
         private static IConfiguration Configuration;
+        private static IGameplay Gameplay;
+        private static IPlayer Player;
 
         private void OnDestroy()
         {
@@ -26,6 +30,8 @@ namespace SpaceShootuh.Core
             GameCamera = null;
             ViewFactory = null;
             Configuration = null;
+            Gameplay = null;
+            Player = null;
 
             var resourceManager = GetResourceManager();
             resourceManager.ResetPools();
@@ -117,6 +123,28 @@ namespace SpaceShootuh.Core
             }
 
             return PlayerInput;
+        }
+
+        public static IGameplay GetGameplay()
+        {
+            if (Gameplay == null)
+            {
+                var gameObject = new GameObject("Gameplay");
+                Gameplay = gameObject.AddComponent<Gameplay>();
+            }
+
+            return Gameplay;
+        }
+
+        public static IPlayer GetPlayer()
+        {
+            if (Player == null)
+            {
+                var resourceManager = GetResourceManager();
+                Player = resourceManager.CreatePrefabInstance<IPlayer, EUnits>(EUnits.SpaceShip);
+            }
+
+            return Player;
         }
     }
 }

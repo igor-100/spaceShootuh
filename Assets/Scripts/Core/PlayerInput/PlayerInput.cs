@@ -7,16 +7,25 @@ namespace SpaceShootuh.Core.Controls
     {
         private const string FireButton = "Fire1";
 
+        private Camera mainCamera;
+
         public event Action Fire = () => { };
         public event Action Escape = () => { };
         public event Action<Vector3> MousePositionUpdated = mousePos => { };
+        public event Action<Vector3> MouseClicked = mousePos => { };
         public event Action<Vector2> Move = moveVector => { };
+
+        private void Awake()
+        {
+            this.mainCamera = CompositionRoot.GetGameCamera().MainCamera;
+        }
 
         private void Update()
         {
             ListenToFire();
             ListenToEscape();
             ListenToMousePos();
+            ListenToMouseClick();
             ListenToMove();
         }
 
@@ -55,6 +64,15 @@ namespace SpaceShootuh.Core.Controls
         private void ListenToMousePos()
         {
             MousePositionUpdated(Input.mousePosition);
+        }
+
+        private void ListenToMouseClick()
+        {
+            if (Input.GetMouseButton(0))
+            {
+                Vector3 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+                MouseClicked(mousePosition);
+            }
         }
 
         private void ListenToMove()

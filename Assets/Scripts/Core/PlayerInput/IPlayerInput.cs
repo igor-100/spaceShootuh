@@ -8,6 +8,7 @@ namespace SpaceShootuh.Core.Controls
         event Action Fire;
         event Action Escape;
         event Action<Vector3> MousePositionUpdated;
+        event Action<Vector3> MouseClicked;
         event Action<Vector2> Move;
 
         void Disable();
