@@ -13,7 +13,6 @@ namespace SpaceShootuh.Core.Controls
         public event Action Escape = () => { };
         public event Action<Vector3> MousePositionUpdated = mousePos => { };
         public event Action<Vector3> MouseClicked = mousePos => { };
-        public event Action<Vector2> Move = moveVector => { };
 
         private void Awake()
         {
@@ -26,7 +25,6 @@ namespace SpaceShootuh.Core.Controls
             ListenToEscape();
             ListenToMousePos();
             ListenToMouseClick();
-            ListenToMove();
         }
 
         public void Enable()
@@ -63,7 +61,7 @@ namespace SpaceShootuh.Core.Controls
 
         private void ListenToMousePos()
         {
-            MousePositionUpdated(Input.mousePosition);
+            MousePositionUpdated(mainCamera.ScreenToWorldPoint(Input.mousePosition));
         }
 
         private void ListenToMouseClick()
@@ -73,14 +71,6 @@ namespace SpaceShootuh.Core.Controls
                 Vector3 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
                 MouseClicked(mousePosition);
             }
-        }
-
-        private void ListenToMove()
-        {
-            var moveVector = Vector2.zero;
-            moveVector.x = Input.GetAxisRaw("Horizontal");
-
-            Move(moveVector.normalized);
         }
     }
 }

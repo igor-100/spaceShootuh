@@ -1,4 +1,5 @@
-﻿using SpaceShootuh.Battle.Units;
+﻿using Cysharp.Threading.Tasks;
+using SpaceShootuh.Battle.Units;
 using SpaceShootuh.Core;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ namespace SpaceShootuh.Battle
         private void Awake()
         {
             player = CompositionRoot.GetPlayer();
+
+            //SpawnEnemies();
         }
     }
 }

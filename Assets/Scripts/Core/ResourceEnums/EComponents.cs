@@ -1,8 +1,4 @@
-public enum EComponents
+public enum EProjectiles
 {
-    GameCamera,
-    UIRoot,
-    MusicAudioMixer,
-    EffectsAudioMixer,
-    AudioListener
+    ShortLazer
 }

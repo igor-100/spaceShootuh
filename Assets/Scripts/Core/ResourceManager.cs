@@ -33,7 +33,7 @@ namespace SpaceShootuh.Core
             return result;
         }
 
-        public GameObject GetPooledObject<T, E>(E item) where E : Enum
+        public GameObject GetPooledObject<E>(E item) where E : Enum
         {
             string type = item.ToString();
             if (!objectPools.ContainsKey(type))
@@ -62,7 +62,7 @@ namespace SpaceShootuh.Core
         }
 
         // was created for testing purposes and should be implemented in a different way
-        public GameObject GetPooledObject<T, E>(E item, int maximumSize) where E : Enum
+        public GameObject GetPooledObject<E>(E item, int maximumSize) where E : Enum
         {
             string type = item.ToString();
             if (!objectPools.ContainsKey(type))
