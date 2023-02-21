@@ -1,4 +1,4 @@
 public enum ELevels
 {
-    Level_1
+    Level1
 }

@@ -3,5 +3,6 @@
     public interface IConfiguration
     {
         PlayerProperties GetPlayer();
+        LevelProperties GetLevel();
     }
 }

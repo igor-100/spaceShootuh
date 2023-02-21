@@ -23,7 +23,9 @@ namespace SpaceShootuh.Battle
             configuration = CompositionRoot.GetConfiguration();
             audioManager = CompositionRoot.GetAudioManager();
             sceneLoader = CompositionRoot.GetSceneLoader();
+
             gameplay = CompositionRoot.GetGameplay();
+            gameplay.SetLevelProperties(configuration.GetLevel());
 
             var uiRoot = CompositionRoot.GetUIRoot();
         }

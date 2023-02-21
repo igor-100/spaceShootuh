@@ -23,7 +23,6 @@ namespace SpaceShootuh.Battle.Weapon
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            Debug.Log("collision");
             gameObject.SetActive(false);
         }
     }

@@ -22,6 +22,7 @@ namespace SpaceShootuh.Core
         private static IConfiguration Configuration;
         private static IGameplay Gameplay;
         private static IPlayer Player;
+        private static GameObject Level;
 
         private void OnDestroy()
         {
@@ -32,6 +33,7 @@ namespace SpaceShootuh.Core
             Configuration = null;
             Gameplay = null;
             Player = null;
+            Level = null;
 
             var resourceManager = GetResourceManager();
             resourceManager.ResetPools();
@@ -145,6 +147,18 @@ namespace SpaceShootuh.Core
             }
 
             return Player;
+        }
+
+        public static GameObject GetLevel()
+        {
+            if (Level == null)
+            {
+                var resourceManager = GetResourceManager();
+                //TODO: Create level manager and pick level from configuration
+                Level = resourceManager.CreatePrefabInstance(ELevels.Level1);
+            }
+
+            return Level;
         }
     }
 }

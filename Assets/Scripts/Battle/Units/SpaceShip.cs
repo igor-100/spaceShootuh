@@ -1,6 +1,7 @@
 ﻿using SpaceShootuh.Battle.Weapon;
 using SpaceShootuh.Configurations;
 using SpaceShootuh.Core;
+using System;
 using UnityEngine;
 
 namespace SpaceShootuh.Battle.Units
@@ -16,6 +17,14 @@ namespace SpaceShootuh.Battle.Units
         private bool isFireAllowed;
         private float currentFireCooldownTime;
 
+        private Borders borders;
+
+        public event Action<IAlive> Died;
+        public event Action<float> HealthPercentChanged;
+
+        public CharacterStat Health { get; private set; }
+        public CharacterStat Speed { get; private set; }
+
         private void Awake()
         {
             resourceManager = CompositionRoot.GetResourceManager();
@@ -25,6 +34,8 @@ namespace SpaceShootuh.Battle.Units
             playerInput.Fire += OnFire;
 
             playerConfig = CompositionRoot.GetConfiguration().GetPlayer();
+            Health = new CharacterStat(playerConfig.Health);
+            Speed = new CharacterStat(playerConfig.Speed);
 
             isFireAllowed = true;
         }
@@ -57,9 +68,26 @@ namespace SpaceShootuh.Battle.Units
 
         private void OnMousePositionUpdated(Vector3 mousePosition)
         {
-            var targetPos = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
+            var targetMousePos = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
 
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, playerConfig.Speed * Time.deltaTime);
+            var targetPos = Vector3.MoveTowards(transform.position, targetMousePos, playerConfig.Speed * Time.deltaTime);
+
+            transform.position = new Vector3
+                (
+                Mathf.Clamp(targetPos.x, borders.MinX, borders.MaxX),
+                Mathf.Clamp(targetPos.y, borders.MinY, borders.MaxY),
+                0
+                );
+        }
+
+        public void SetMovementBorders(float minXOffset, float maxXOffset, float minYOffset, float maxYOffset)
+        {
+            this.borders = new Borders(minXOffset, maxXOffset, minYOffset, maxYOffset);
+        }
+
+        public void Hit(float damage)
+        {
+            throw new NotImplementedException();
         }
     }
 }
