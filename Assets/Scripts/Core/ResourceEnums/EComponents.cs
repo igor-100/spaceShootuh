@@ -1,9 +1,7 @@
 public enum EComponents
 {
-    Cameras,
-    SceneLoader,
+    GameCamera,
     UIRoot,
-    GlobalLight,
     MusicAudioMixer,
     EffectsAudioMixer,
     AudioListener

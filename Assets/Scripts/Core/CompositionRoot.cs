@@ -46,7 +46,7 @@ namespace SpaceShootuh.Core
             if (GameCamera == null)
             {
                 var resourceManager = GetResourceManager();
-                GameCamera = resourceManager.CreatePrefabInstance<IGameCamera, EComponents>(EComponents.Cameras);
+                GameCamera = resourceManager.CreatePrefabInstance<IGameCamera, EComponents>(EComponents.GameCamera);
             }
 
             return GameCamera;
@@ -56,8 +56,8 @@ namespace SpaceShootuh.Core
         {
             if (SceneLoader == null)
             {
-                var resourceManager = GetResourceManager();
-                SceneLoader = resourceManager.CreatePrefabInstance<ISceneLoader, EComponents>(EComponents.SceneLoader);
+                var gameObject = new GameObject("SceneLoader");
+                SceneLoader = gameObject.AddComponent<SceneLoader>();
             }
 
             return SceneLoader;
