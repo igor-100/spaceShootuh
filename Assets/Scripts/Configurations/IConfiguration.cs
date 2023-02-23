@@ -4,5 +4,7 @@
     {
         PlayerProperties GetPlayer();
         LevelProperties GetLevel();
+        EnemiesProperties GetEnemies();
+        ProjectilesProperties GetProjectiles();
     }
 }

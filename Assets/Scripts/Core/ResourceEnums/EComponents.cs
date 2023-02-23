@@ -1,4 +1,5 @@
 public enum EProjectiles
 {
-    ShortLazer
+    ShortLazer,
+    Ball
 }

@@ -1,4 +1,5 @@
 ﻿using SpaceShootuh.Battle;
+using SpaceShootuh.Battle.Environment;
 using SpaceShootuh.Battle.Units;
 using SpaceShootuh.Configurations;
 using SpaceShootuh.Core.Audio;
@@ -22,7 +23,7 @@ namespace SpaceShootuh.Core
         private static IConfiguration Configuration;
         private static IGameplay Gameplay;
         private static IPlayer Player;
-        private static GameObject Level;
+        private static ILevel Level;
 
         private void OnDestroy()
         {
@@ -149,13 +150,13 @@ namespace SpaceShootuh.Core
             return Player;
         }
 
-        public static GameObject GetLevel()
+        public static ILevel GetLevel()
         {
             if (Level == null)
             {
                 var resourceManager = GetResourceManager();
                 //TODO: Create level manager and pick level from configuration
-                Level = resourceManager.CreatePrefabInstance(ELevels.Level1);
+                Level = resourceManager.CreatePrefabInstance<ILevel, ELevels>(ELevels.Level1);
             }
 
             return Level;

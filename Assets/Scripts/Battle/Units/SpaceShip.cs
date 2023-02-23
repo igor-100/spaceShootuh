@@ -8,8 +8,7 @@ namespace SpaceShootuh.Battle.Units
 {
     public class SpaceShip : MonoBehaviour, IPlayer
     {
-        private const float FIRE_DELTA_TIME = 0.1f;
-        private const float FIRE_SPEED = 2f;
+        private const float FIRE_DELTA_TIME = 0.2f;
 
         private PlayerProperties playerConfig;
         private IResourceManager resourceManager;
@@ -19,11 +18,12 @@ namespace SpaceShootuh.Battle.Units
 
         private Borders borders;
 
-        public event Action<IAlive> Died;
-        public event Action<float> HealthPercentChanged;
+        public event Action<IAlive> Died = (hero) => { };
+        public event Action<float> HealthPercentChanged = (value) => { };
 
-        public CharacterStat Health { get; private set; }
-        public CharacterStat Speed { get; private set; }
+        public float Health { get; private set; }
+        public CharacterStat HealthStat { get; private set; }
+        public CharacterStat SpeedStat { get; private set; }
 
         private void Awake()
         {
@@ -34,8 +34,9 @@ namespace SpaceShootuh.Battle.Units
             playerInput.Fire += OnFire;
 
             playerConfig = CompositionRoot.GetConfiguration().GetPlayer();
-            Health = new CharacterStat(playerConfig.Health);
-            Speed = new CharacterStat(playerConfig.Speed);
+            HealthStat = new CharacterStat(playerConfig.Health);
+            SpeedStat = new CharacterStat(playerConfig.Speed);
+            Health = HealthStat.Value;
 
             isFireAllowed = true;
         }
@@ -61,7 +62,7 @@ namespace SpaceShootuh.Battle.Units
                 projectileObj.transform.position = transform.position + transform.up * 0.3f;
 
                 var projectile = projectileObj.GetComponent<IProjectile>();
-                projectile.Velocity = transform.up * FIRE_SPEED;
+                projectile.Shoot(transform.up);
                 isFireAllowed = false;
             }
         }
@@ -87,7 +88,21 @@ namespace SpaceShootuh.Battle.Units
 
         public void Hit(float damage)
         {
-            throw new NotImplementedException();
+            if (damage >= Health)
+            {
+                Die();
+            }
+            else
+            {
+                Health -= damage;
+                HealthPercentChanged(Health);
+            }
+        }
+
+        private void Die()
+        {
+            Died(this);
+            Destroy(gameObject);
         }
     }
 }

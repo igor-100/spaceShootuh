@@ -1,4 +1,5 @@
 public enum EUnits
 {
-    SpaceShip
+    SpaceShip,
+    EnemyOne
 }
