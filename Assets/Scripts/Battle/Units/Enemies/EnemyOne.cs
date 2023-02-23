@@ -25,6 +25,7 @@ namespace SpaceShootuh.Battle.Units
         private TweenerCore<Vector3, Vector3, VectorOptions> movingTween;
         private CancellationTokenSource cancellationTokenSource;
         private bool isDying;
+        private bool isShooting;
 
         public event Action<IAlive> Died = (enemy) => { };
         public event Action<float> HealthPercentChanged = (value) => { };
@@ -115,7 +116,8 @@ namespace SpaceShootuh.Battle.Units
 
         private async void Shoot()
         {
-            while (isActiveAndEnabled)
+            isShooting = true;
+            while (isShooting)
             {
                 var projectileObj = resourceManager.GetPooledObject(EProjectiles.Ball);
                 projectileObj.transform.position = transform.position - transform.up * 0.3f;
@@ -126,6 +128,15 @@ namespace SpaceShootuh.Battle.Units
                 float fireDelay = UnityEngine.Random.Range(FIRE_DELTA_TIME - RANDOM_FIRE, FIRE_DELTA_TIME + RANDOM_FIRE);
                 await UniTask.Delay((int)(fireDelay * 1000));
             }
+        }
+
+        private void OnDisable()
+        {
+            if (!cancellationTokenSource.IsCancellationRequested)
+            {
+                TaskUtils.CancelToken(cancellationTokenSource);
+            }
+                isShooting = false;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)

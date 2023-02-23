@@ -1,4 +1,6 @@
 public enum EViews
 {
-    GameHUD
+    GameHUD,
+    Pause,
+    GameOver
 }

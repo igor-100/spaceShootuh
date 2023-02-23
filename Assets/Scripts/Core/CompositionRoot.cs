@@ -7,6 +7,8 @@ using SpaceShootuh.Core.Cameras;
 using SpaceShootuh.Core.Controls;
 using SpaceShootuh.UI;
 using SpaceShootuh.UI.GameHUD;
+using SpaceShootuh.UI.GameOver;
+using SpaceShootuh.UI.Pause;
 using System;
 using UnityEngine;
 
@@ -26,6 +28,8 @@ namespace SpaceShootuh.Core
         private static IPlayer Player;
         private static ILevel Level;
         private static IGameHUD GameHUD;
+        private static IPauseScreen PauseScreen;
+        private static IGameOverScreen GameOverScreen;
 
         private void OnDestroy()
         {
@@ -38,6 +42,8 @@ namespace SpaceShootuh.Core
             Player = null;
             Level = null;
             GameHUD = null;
+            PauseScreen = null;
+            GameOverScreen = null;
 
             var resourceManager = GetResourceManager();
             resourceManager.ResetPools();
@@ -129,6 +135,28 @@ namespace SpaceShootuh.Core
             }
 
             return GameHUD;
+        }
+
+        public static IPauseScreen GetPauseScreen()
+        {
+            if (PauseScreen == null)
+            {
+                var gameObject = new GameObject("PauseScreen");
+                PauseScreen = gameObject.AddComponent<PauseScreen>();
+            }
+
+            return PauseScreen;
+        }
+
+        public static IGameOverScreen GetGameOverScreen()
+        {
+            if (GameOverScreen == null)
+            {
+                var gameObject = new GameObject("GameOverScreen");
+                GameOverScreen = gameObject.AddComponent<GameOverScreen>();
+            }
+
+            return GameOverScreen;
         }
 
         public static IPlayerInput GetPlayerInput()

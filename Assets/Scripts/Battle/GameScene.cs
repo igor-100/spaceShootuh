@@ -3,6 +3,8 @@ using SpaceShootuh.Core;
 using SpaceShootuh.Core.Audio;
 using SpaceShootuh.Core.Cameras;
 using SpaceShootuh.Core.Controls;
+using SpaceShootuh.UI.GameOver;
+using SpaceShootuh.UI.Pause;
 using UnityEngine;
 
 namespace SpaceShootuh.Battle
@@ -15,6 +17,8 @@ namespace SpaceShootuh.Battle
         private IAudioManager audioManager;
         private ISceneLoader sceneLoader;
         private IGameplay gameplay;
+        private IPauseScreen pauseScreen;
+        private IGameOverScreen gameOverScreen;
 
         private void Awake()
         {
@@ -28,6 +32,23 @@ namespace SpaceShootuh.Battle
             gameplay.SetLevelProperties(configuration.GetLevel());
 
             var uiRoot = CompositionRoot.GetUIRoot();
+            pauseScreen = CompositionRoot.GetPauseScreen();
+            gameOverScreen = CompositionRoot.GetGameOverScreen();
+
+            gameplay.GameOver += OnGameOver;
+        }
+
+        private void Start()
+        {
+            pauseScreen.Hide();
+            gameOverScreen.Hide();
+        }
+
+        private void OnGameOver(int score)
+        {
+            gameOverScreen.Show();
+            gameOverScreen.SetScore(score);
+            gameplay.GameOver -= OnGameOver;
         }
     }
 }
