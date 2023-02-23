@@ -91,6 +91,8 @@ namespace SpaceShootuh.Battle.Units
         {
             if (damage >= Health)
             {
+                Health = 0;
+                HealthPercentChanged(Health);
                 Die();
             }
             else

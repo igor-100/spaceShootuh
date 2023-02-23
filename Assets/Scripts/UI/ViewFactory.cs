@@ -1,4 +1,5 @@
 ﻿using SpaceShootuh.Core;
+using SpaceShootuh.UI.GameHUD;
 
 namespace SpaceShootuh.UI
 {
@@ -11,6 +12,14 @@ namespace SpaceShootuh.UI
         {
             UIRoot = uiRoot;
             ResourceManager = resourceManager;
+        }
+
+        public IGameHUDView CreateGameHUD()
+        {
+            var view = ResourceManager.CreatePrefabInstance<IGameHUDView, EViews>(EViews.GameHUD);
+            view.SetParent(UIRoot.MainCanvas);
+
+            return view;
         }
     }
 }

@@ -6,6 +6,8 @@ namespace SpaceShootuh.Battle.Units
 {
     public interface IEnemy : IAlive, IDamageable
     {
+        int Score { get; }
+
         void SetWaypoints(List<Vector2> waypoints);
         UniTask Go();
     }

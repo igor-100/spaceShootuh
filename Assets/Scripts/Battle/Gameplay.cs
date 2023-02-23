@@ -3,6 +3,7 @@ using SpaceShootuh.Battle.Environment;
 using SpaceShootuh.Battle.Units;
 using SpaceShootuh.Configurations;
 using SpaceShootuh.Core;
+using SpaceShootuh.UI.GameHUD;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,14 +14,19 @@ namespace SpaceShootuh.Battle
         private IPlayer player;
         private ILevel level;
         private IResourceManager resourceManager;
+        private IGameHUD gameHud;
         private LevelProperties levelProperties;
+
+        private int currentScore;
 
         private void Awake()
         {
             player = CompositionRoot.GetPlayer();
             level = CompositionRoot.GetLevel();
             resourceManager = CompositionRoot.GetResourceManager();
+            gameHud = CompositionRoot.GetGameHUD();
 
+            player.HealthPercentChanged += OnPlayerHealthChanged;
             SpawnEnemies();
         }
 
@@ -47,10 +53,25 @@ namespace SpaceShootuh.Battle
 
                     var task = enemy.Go();
                     tasks.Add(task);
+
+                    enemy.Died += OnEnemyDied;
                 }
 
                 await UniTask.WhenAll(tasks);
             }
+        }
+
+        private void OnEnemyDied(IAlive alive)
+        {
+            var enemy = (IEnemy)alive;
+            currentScore += enemy.Score;
+            gameHud.SetScore(currentScore);
+            enemy.Died -= OnEnemyDied;
+        }
+
+        private void OnPlayerHealthChanged(float value)
+        {
+            gameHud.SetHealth(value / player.HealthStat.Value);
         }
     }
 }

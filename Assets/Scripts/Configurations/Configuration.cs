@@ -33,6 +33,7 @@ namespace SpaceShootuh.Configurations
                     new EnemiesProperties.EnemyProperties()
                     {
                         Type = EUnits.EnemyOne,
+                        Score = 10,
                         Health = 50f,
                         Speed = 2f,
                         Damage = 35f

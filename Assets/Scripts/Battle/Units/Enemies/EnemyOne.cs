@@ -34,6 +34,7 @@ namespace SpaceShootuh.Battle.Units
         public CharacterStat HealthStat { get; private set; }
         public CharacterStat DamageStat { get; private set; }
         public CharacterStat SpeedStat { get; private set; }
+        public int Score { get; private set; }
 
         private void Awake()
         {
@@ -49,6 +50,7 @@ namespace SpaceShootuh.Battle.Units
                 HealthStat = new CharacterStat(properties.Health);
                 DamageStat = new CharacterStat(properties.Damage);
                 SpeedStat = new CharacterStat(properties.Speed);
+                Score = properties.Score;
 
                 Health = HealthStat.Value;
             }

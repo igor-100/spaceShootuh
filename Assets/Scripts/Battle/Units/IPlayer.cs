@@ -2,6 +2,10 @@
 {
     public interface IPlayer : IAlive
     {
+        float Health { get; }
+        CharacterStat HealthStat { get; }
+        CharacterStat SpeedStat { get; }
+
         void SetMovementBorders(float minXOffset, float maxXOffset, float minYOffset, float maxYOffset);
     }
     public class Borders

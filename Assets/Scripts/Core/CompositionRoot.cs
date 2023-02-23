@@ -6,6 +6,7 @@ using SpaceShootuh.Core.Audio;
 using SpaceShootuh.Core.Cameras;
 using SpaceShootuh.Core.Controls;
 using SpaceShootuh.UI;
+using SpaceShootuh.UI.GameHUD;
 using System;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ namespace SpaceShootuh.Core
         private static IGameplay Gameplay;
         private static IPlayer Player;
         private static ILevel Level;
+        private static IGameHUD GameHUD;
 
         private void OnDestroy()
         {
@@ -35,6 +37,7 @@ namespace SpaceShootuh.Core
             Gameplay = null;
             Player = null;
             Level = null;
+            GameHUD = null;
 
             var resourceManager = GetResourceManager();
             resourceManager.ResetPools();
@@ -115,6 +118,17 @@ namespace SpaceShootuh.Core
             }
 
             return ViewFactory;
+        }
+
+        public static IGameHUD GetGameHUD()
+        {
+            if (GameHUD == null)
+            {
+                var gameObject = new GameObject("GameHUD");
+                GameHUD = gameObject.AddComponent<GameHUD>();
+            }
+
+            return GameHUD;
         }
 
         public static IPlayerInput GetPlayerInput()

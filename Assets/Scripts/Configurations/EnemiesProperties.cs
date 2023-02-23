@@ -10,6 +10,7 @@ namespace SpaceShootuh.Configurations
         {
             public EUnits Type;
 
+            public int Score;
             public float Health;
             public float Speed;
             public float Damage;
