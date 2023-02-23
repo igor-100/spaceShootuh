@@ -162,6 +162,7 @@ namespace SpaceShootuh.Battle
         {
             TaskUtils.CancelToken(enemiesTokenSource);
             TaskUtils.CancelToken(obstaclesTokenSource);
+            TaskUtils.CancelToken(powerUpsTokenSource);
         }
     }
 }
