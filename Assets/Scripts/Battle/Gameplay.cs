@@ -1,13 +1,12 @@
 ﻿using Cysharp.Threading.Tasks;
 using SpaceShootuh.Battle.Environment;
+using SpaceShootuh.Battle.Environment.Obstacle;
 using SpaceShootuh.Battle.Units;
 using SpaceShootuh.Configurations;
 using SpaceShootuh.Core;
 using SpaceShootuh.UI.GameHUD;
-using SpaceShootuh.Utils;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 namespace SpaceShootuh.Battle
@@ -21,8 +20,6 @@ namespace SpaceShootuh.Battle
         private LevelProperties levelProperties;
 
         private int currentScore;
-        private bool isTerminatingProcess;
-        private CancellationTokenSource tokenSource;
 
         public event Action<int> GameOver = (score) => { };
 
@@ -36,6 +33,7 @@ namespace SpaceShootuh.Battle
             player.HealthPercentChanged += OnPlayerHealthChanged;
             player.Died += OnPlayerDied;
             SpawnEnemies().Forget();
+            SpawnObstacles().Forget();
         }
 
         public void SetLevelProperties(LevelProperties levelProperties)
@@ -48,9 +46,6 @@ namespace SpaceShootuh.Battle
 
         private async UniTaskVoid SpawnEnemies()
         {
-            tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
-
             foreach (var wave in level.WaveConfigs)
             {
                 var tasks = new List<UniTask>();
@@ -58,7 +53,7 @@ namespace SpaceShootuh.Battle
                 for (int i = 0; i < wave.NumberOfEnemies; i++)
                 {
                     float spawnDelay = UnityEngine.Random.Range(wave.TimeBetweenSpawns - wave.SpawnRandomFactor, wave.TimeBetweenSpawns + wave.SpawnRandomFactor);
-                    await UniTask.Delay((int)(spawnDelay * 1000), cancellationToken: token);
+                    await UniTask.Delay((int)(spawnDelay * 1000));
                     var enemy = resourceManager.GetPooledObject(wave.EnemyType).GetComponent<IEnemy>();
                     enemy.SetWaypoints(wave.Waypoints);
 
@@ -69,6 +64,19 @@ namespace SpaceShootuh.Battle
                 }
 
                 await UniTask.WhenAll(tasks);
+            }
+        }
+
+        private async UniTaskVoid SpawnObstacles()
+        {
+            while (isActiveAndEnabled)
+            {
+                float spawnDelay = UnityEngine.Random.Range(5f, 10f);
+                await UniTask.Delay((int)(spawnDelay * 1000));
+                var obstacleGo = resourceManager.GetPooledObject(EObstacles.BluePlanet);
+                obstacleGo.transform.position = new Vector2(UnityEngine.Random.Range(-2f, 2f), 8f);
+                var obstacle = obstacleGo.GetComponent<IObstacle>();
+                obstacle.Go(-transform.up);
             }
         }
 
@@ -96,11 +104,6 @@ namespace SpaceShootuh.Battle
             await UniTask.Delay(2000);
 
             GameOver(currentScore);
-        }
-
-        private void OnDestroy()
-        {
-            TaskUtils.CancelToken(tokenSource);
         }
     }
 }

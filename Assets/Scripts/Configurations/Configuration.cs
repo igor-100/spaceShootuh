@@ -8,6 +8,7 @@ namespace SpaceShootuh.Configurations
         private readonly LevelProperties level;
         private readonly EnemiesProperties enemies;
         private readonly ProjectilesProperties projectiles;
+        private readonly ObstaclesProperties obstacles;
 
         public Configuration()
         {
@@ -53,11 +54,20 @@ namespace SpaceShootuh.Configurations
                     Speed = 1f
                 }
             };
+            obstacles = new ObstaclesProperties()
+            {
+                BluePlanet = new ObstaclesProperties.ObstacleProperties()
+                {
+                    Damage = 25f,
+                    Speed = 0.5f
+                }
+            };
         }
 
         public PlayerProperties GetPlayer() => player;
         public LevelProperties GetLevel() => level;
         public EnemiesProperties GetEnemies() => enemies;
         public ProjectilesProperties GetProjectiles() => projectiles;
+        public ObstaclesProperties GetObstacles() => obstacles;
     }
 }

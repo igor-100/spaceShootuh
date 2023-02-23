@@ -6,5 +6,6 @@
         LevelProperties GetLevel();
         EnemiesProperties GetEnemies();
         ProjectilesProperties GetProjectiles();
+        ObstaclesProperties GetObstacles();
     }
 }

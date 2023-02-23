@@ -17,6 +17,7 @@ namespace SpaceShootuh.UI.GameOver
         {
             restartButton.onClick.AddListener(OnRestartClicked);
         }
+
         public void OnRestartClicked()
         {
             RestartClicked();
