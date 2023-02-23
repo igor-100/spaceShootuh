@@ -1,6 +1,7 @@
 ﻿using SpaceShootuh.Battle.Weapon;
 using SpaceShootuh.Configurations;
 using SpaceShootuh.Core;
+using SpaceShootuh.Core.Controls;
 using System;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace SpaceShootuh.Battle.Units
 
         private PlayerProperties playerConfig;
         private IResourceManager resourceManager;
-
+        private IPlayerInput playerInput;
         private bool isFireAllowed;
         private float currentFireCooldownTime;
 
@@ -29,7 +30,7 @@ namespace SpaceShootuh.Battle.Units
         {
             resourceManager = CompositionRoot.GetResourceManager();
 
-            var playerInput = CompositionRoot.GetPlayerInput();
+            playerInput = CompositionRoot.GetPlayerInput();
             playerInput.MousePositionUpdated += OnMousePositionUpdated;
             playerInput.Fire += OnFire;
 
@@ -102,6 +103,8 @@ namespace SpaceShootuh.Battle.Units
         private void Die()
         {
             Died(this);
+            playerInput.MousePositionUpdated -= OnMousePositionUpdated;
+            playerInput.Fire -= OnFire;
             Destroy(gameObject);
         }
     }

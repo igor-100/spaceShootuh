@@ -1,22 +1,30 @@
 ﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using SpaceShootuh.Battle.Weapon;
 using SpaceShootuh.Configurations;
 using SpaceShootuh.Core;
+using SpaceShootuh.Utils;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace SpaceShootuh.Battle.Units
 {
     public class EnemyOne : MonoBehaviour, IEnemy
     {
-        private const float FIRE_DELTA_TIME = 1f;
+        private const float FIRE_DELTA_TIME = 2f;
         private const float RANDOM_FIRE = 0.5f;
 
         private EnemiesProperties.EnemyProperties properties;
         private List<Vector2> waypoints;
         private IResourceManager resourceManager;
+
+        private TweenerCore<Vector3, Vector3, VectorOptions> movingTween;
+        private CancellationTokenSource cancellationTokenSource;
+        private bool isDying;
 
         public event Action<IAlive> Died = (enemy) => { };
         public event Action<float> HealthPercentChanged = (value) => { };
@@ -65,6 +73,12 @@ namespace SpaceShootuh.Battle.Units
 
         private void Die()
         {
+            if (isDying)
+                return;
+            isDying = true;
+            TaskUtils.CancelToken(cancellationTokenSource);
+            isDying = false;
+
             Died(this);
             gameObject.SetActive(false);
         }
@@ -77,20 +91,29 @@ namespace SpaceShootuh.Battle.Units
         public async UniTask Go()
         {
             transform.position = waypoints[0];
-
             Shoot();
+
+            cancellationTokenSource = new CancellationTokenSource();
+            var token = cancellationTokenSource.Token;
 
             foreach (var waypoint in waypoints)
             {
-                await transform.DOMove(waypoint, SpeedStat.Value).SetEase(Ease.Linear).SetSpeedBased().AsyncWaitForCompletion();
+                if (!token.IsCancellationRequested)
+                {
+                    movingTween = transform.DOMove(waypoint, SpeedStat.Value).SetEase(Ease.Linear).SetSpeedBased();
+                    await movingTween.ToUniTaskWithImmediateCancel(token);
+                }
             }
 
-            Die();
+            if (!token.IsCancellationRequested)
+            {
+                DieNaturally();
+            }
         }
 
         private async void Shoot()
         {
-            while (true)
+            while (isActiveAndEnabled)
             {
                 var projectileObj = resourceManager.GetPooledObject(EProjectiles.Ball);
                 projectileObj.transform.position = transform.position - transform.up * 0.3f;
@@ -101,6 +124,26 @@ namespace SpaceShootuh.Battle.Units
                 float fireDelay = UnityEngine.Random.Range(FIRE_DELTA_TIME - RANDOM_FIRE, FIRE_DELTA_TIME + RANDOM_FIRE);
                 await UniTask.Delay((int)(fireDelay * 1000));
             }
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.gameObject.TryGetComponent<IAlive>(out var aliveCol))
+            {
+                aliveCol.Hit(Damage);
+
+                Die();
+            }
+        }
+
+        private void DieNaturally()
+        {
+            if (isDying)
+                return;
+            isDying = true;
+            TaskUtils.CancelToken(cancellationTokenSource);
+
+            gameObject.SetActive(false);
         }
     }
 }

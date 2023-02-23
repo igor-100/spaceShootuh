@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SpaceShootuh.Battle.Units;
+using UnityEngine;
 
 namespace SpaceShootuh.Battle.Weapon
 {
@@ -6,7 +7,7 @@ namespace SpaceShootuh.Battle.Weapon
     {
         private Rigidbody2D rigidBody;
 
-        public float Damage { get; private set; }
+        public float Damage => damageStat.Value;
         private CharacterStat damageStat;
         private CharacterStat speedStat;
 
@@ -25,6 +26,11 @@ namespace SpaceShootuh.Battle.Weapon
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            if (collision.gameObject.TryGetComponent<IAlive>(out var aliveCol))
+            {
+                aliveCol.Hit(Damage);
+            }
+
             gameObject.SetActive(false);
         }
 

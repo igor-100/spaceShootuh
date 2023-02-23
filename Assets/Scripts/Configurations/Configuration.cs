@@ -43,7 +43,7 @@ namespace SpaceShootuh.Configurations
             {
                 ShortLazer = new ProjectilesProperties.ProjectileProperties()
                 {
-                    Damage = 10,
+                    Damage = 25,
                     Speed = 7f
                 },
                 Ball_02 = new ProjectilesProperties.ProjectileProperties()
