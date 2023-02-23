@@ -22,7 +22,7 @@ namespace SpaceShootuh.Battle.Environment.Obstacle
 
             if (properties == null)
             {
-                Debug.LogError("ShortLazer props have not been set");
+                Debug.LogError("Blueplanet props have not been set");
             }
 
             damageStat = new CharacterStat(properties.Damage);

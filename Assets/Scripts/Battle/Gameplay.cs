@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using SpaceShootuh.Battle.Environment;
 using SpaceShootuh.Battle.Environment.Obstacle;
+using SpaceShootuh.Battle.PowerUp;
 using SpaceShootuh.Battle.Units;
 using SpaceShootuh.Configurations;
 using SpaceShootuh.Core;
@@ -9,6 +10,7 @@ using SpaceShootuh.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace SpaceShootuh.Battle
@@ -24,6 +26,7 @@ namespace SpaceShootuh.Battle
         private int currentScore;
         private CancellationTokenSource enemiesTokenSource;
         private CancellationTokenSource obstaclesTokenSource;
+        private CancellationTokenSource powerUpsTokenSource;
 
         public event Action<int> GameOver = (score) => { };
 
@@ -38,6 +41,7 @@ namespace SpaceShootuh.Battle
             player.Died += OnPlayerDied;
             SpawnEnemies().Forget();
             SpawnObstacles().Forget();
+            SpawnPowerUps().Forget();
         }
 
         public void SetLevelProperties(LevelProperties levelProperties)
@@ -53,6 +57,24 @@ namespace SpaceShootuh.Battle
             enemiesTokenSource = new CancellationTokenSource();
             var token = enemiesTokenSource.Token;
 
+            // cycle waves due to having not so many of them manually configured
+            int counter = 0;
+            while (isActiveAndEnabled)
+            {
+                // increasing difficulty :)
+                CharacterStatModifier healthModifier = null;
+                if (counter > 0)
+                {
+                    healthModifier = new CharacterStatModifier(counter * 0.5f, StatModType.PercentAdd);
+                }
+
+                await SpawnWaves(token, healthModifier);
+                counter++;
+            }
+        }
+
+        private async UniTask SpawnWaves(CancellationToken token, CharacterStatModifier healthModifier)
+        {
             foreach (var wave in level.WaveConfigs)
             {
                 var tasks = new List<UniTask>();
@@ -63,6 +85,12 @@ namespace SpaceShootuh.Battle
                     await UniTask.Delay((int)(spawnDelay * 1000), cancellationToken: token);
                     var enemy = resourceManager.GetPooledObject(wave.EnemyType).GetComponent<IEnemy>();
                     enemy.SetWaypoints(wave.Waypoints);
+
+                    if (healthModifier != null)
+                    {
+                        enemy.HealthStat.AddModifier(healthModifier);
+                        enemy.Heal(enemy.HealthStat.Value);
+                    }
 
                     var task = enemy.Go();
                     tasks.Add(task);
@@ -77,15 +105,30 @@ namespace SpaceShootuh.Battle
         private async UniTaskVoid SpawnObstacles()
         {
             obstaclesTokenSource = new CancellationTokenSource();
-            var token = enemiesTokenSource.Token;
+            var token = obstaclesTokenSource.Token;
             while (isActiveAndEnabled)
             {
-                float spawnDelay = UnityEngine.Random.Range(5f, 10f);
+                float spawnDelay = UnityEngine.Random.Range(7f, 15f);
                 await UniTask.Delay((int)(spawnDelay * 1000), cancellationToken: token);
                 var obstacleGo = resourceManager.GetPooledObject(EObstacles.BluePlanet);
                 obstacleGo.transform.position = new Vector2(UnityEngine.Random.Range(-2f, 2f), 8f);
                 var obstacle = obstacleGo.GetComponent<IObstacle>();
                 obstacle.Go(-transform.up);
+            }
+        }
+
+        private async UniTaskVoid SpawnPowerUps()
+        {
+            powerUpsTokenSource = new CancellationTokenSource();
+            var token = powerUpsTokenSource.Token;
+            while (isActiveAndEnabled)
+            {
+                float spawnDelay = UnityEngine.Random.Range(10f, 20f);
+                await UniTask.Delay((int)(spawnDelay * 1000), cancellationToken: token);
+                var powerUpGo = resourceManager.GetPooledObject(EPowerUps.HealthPowerUp);
+                powerUpGo.transform.position = new Vector2(UnityEngine.Random.Range(-2f, 2f), 8f);
+                var powerUp = powerUpGo.GetComponent<IPowerUp>();
+                powerUp.Go(-transform.up);
             }
         }
 

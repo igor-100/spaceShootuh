@@ -92,12 +92,15 @@ namespace SpaceShootuh.Battle.Units
             if (damage >= Health)
             {
                 Health = 0;
+                Debug.Log($"Player has been hit (damage: {damage}, health: {Health})");
                 HealthPercentChanged(Health);
+                Debug.Log("Player has been killed");
                 Die();
             }
             else
             {
                 Health -= damage;
+                Debug.Log($"Player has been hit (damage: {damage}, health: {Health})");
                 HealthPercentChanged(Health);
             }
         }
@@ -108,6 +111,19 @@ namespace SpaceShootuh.Battle.Units
             playerInput.MousePositionUpdated -= OnMousePositionUpdated;
             playerInput.Fire -= OnFire;
             Destroy(gameObject);
+        }
+
+        public void Heal(float value)
+        {
+            if (Health + value >= HealthStat.Value)
+            {
+                Health = HealthStat.Value;
+            }
+            else
+            {
+                Health += value;
+            }
+            HealthPercentChanged(Health);
         }
     }
 }

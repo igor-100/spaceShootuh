@@ -158,5 +158,17 @@ namespace SpaceShootuh.Battle.Units
 
             gameObject.SetActive(false);
         }
+
+        public void Heal(float value)
+        {
+            if (Health + value >= HealthStat.Value)
+            {
+                Health = HealthStat.Value;
+            }
+            else
+            {
+                Health += value;
+            }
+        }
     }
 }

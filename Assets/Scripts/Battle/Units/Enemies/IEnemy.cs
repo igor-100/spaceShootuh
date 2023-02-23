@@ -8,6 +8,8 @@ namespace SpaceShootuh.Battle.Units
     {
         int Score { get; }
 
+        CharacterStat HealthStat { get; }
+
         void SetWaypoints(List<Vector2> waypoints);
         UniTask Go();
     }

@@ -9,6 +9,7 @@ namespace SpaceShootuh.Configurations
         private readonly EnemiesProperties enemies;
         private readonly ProjectilesProperties projectiles;
         private readonly ObstaclesProperties obstacles;
+        private readonly PowerUpsProperties powerUps;
 
         public Configuration()
         {
@@ -62,6 +63,14 @@ namespace SpaceShootuh.Configurations
                     Speed = 0.5f
                 }
             };
+            powerUps = new PowerUpsProperties()
+            {
+                HealthPowerUp = new PowerUpsProperties.PowerUpProperties()
+                {
+                    Speed = 0.8f,
+                    HealthModifier = 0.2f
+                }
+            };
         }
 
         public PlayerProperties GetPlayer() => player;
@@ -69,5 +78,6 @@ namespace SpaceShootuh.Configurations
         public EnemiesProperties GetEnemies() => enemies;
         public ProjectilesProperties GetProjectiles() => projectiles;
         public ObstaclesProperties GetObstacles() => obstacles;
+        public PowerUpsProperties GetPowerUps() => powerUps;
     }
 }
